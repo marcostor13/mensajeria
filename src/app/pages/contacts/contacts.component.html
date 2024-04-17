@@ -1,0 +1,29 @@
+<div class="flex justify-content-between p-5">
+    <div class="input">
+        <input nz-input placeholder="Basic usage" [(ngModel)]="value" type="number" />
+    </div>
+    <button nz-button nzType="primary">Agregar</button>
+</div>
+
+<div class="p-5">
+    <nz-table #basicTable [nzData]="listOfData">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+        <tbody>
+            @for (data of basicTable.data; track $index) {
+                <tr>
+                  <td>{{ data.name }}</td>
+                  <td>{{ data.phone }}</td>
+                  <td>
+                    <a>Action 一 {{ data.name }}</a>
+                    <a>Delete</a>
+                  </td>
+                </tr>
+            }
+        </tbody>
+    </nz-table>
+</div>
