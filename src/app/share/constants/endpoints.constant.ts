@@ -1,3 +1,3 @@
 export const ENDPOINTS = {
-    api: 'http://localhost:3000'
+    api: 'https://apimensajeria.focodigital.click'    
 }
