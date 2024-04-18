@@ -1,6 +1,6 @@
 <div class="flex justify-content-between p-5">
     <div class="input">
-        <input nz-input placeholder="Basic usage" [(ngModel)]="value" type="number" />
+        <input (keyup)="search()" nz-input placeholder="Buscar por nombre" [(ngModel)]="value" type="text" />
     </div>
     <button (click)="openModal()" nz-button nzType="primary">Agregar</button>
 </div>
@@ -19,8 +19,13 @@
                   <td>{{ data.name }}</td>
                   <td>{{ data.phone }}</td>
                   <td>
-                    <a>Action 一 {{ data.name }}</a>
-                    <a>Delete</a>
+                    <a>Action 一 {{ data.name }}</a>                    
+                    <a
+                      nz-popconfirm
+                      nzPopconfirmTitle="¿Seguro que desea eliminar el contacto?"
+                      nzPopconfirmPlacement="bottom"
+                      (nzOnConfirm)="deleteContact(data._id || '')"
+                    >Delete</a>
                   </td>
                 </tr>
             }

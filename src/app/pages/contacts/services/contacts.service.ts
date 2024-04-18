@@ -17,5 +17,13 @@ export class ContactsService {
     return this.http.get<Contacts[]>(`${ENDPOINTS.api}/contacts`)
   }
 
+  saveContact(payload: Contacts): Observable<Contacts>{
+    return this.http.post<Contacts>(`${ENDPOINTS.api}/contacts`, payload)
+  }
+
+  deleteContact(_id: string): Observable<Contacts>{
+    return this.http.delete<Contacts>(`${ENDPOINTS.api}/contacts/${_id}`)
+  }
+
 
 }
