@@ -13,8 +13,8 @@ export class AuthService {
     private http: HttpClient
   ) { }
 
-  login(payload: UserPayload ): Observable<User[]>{
-    return this.http.post<User[]>(`${ENDPOINTS.api}/auth/login`, payload)
+  login(payload: UserPayload ): Observable<User>{
+    return this.http.post<User>(`${ENDPOINTS.api}/auth/login`, payload)
   }
 
 }
