@@ -28,9 +28,8 @@ export class ContactsComponent {
   value: string = ''
   listOfData: Contacts[] = []
   listOfDataTmp: Contacts[] = []
-  isVisible: boolean = false
-  name: string = ''
-  phone: string = ''
+  isVisible: boolean = false  
+  form!: Contacts 
 
   constructor(
     private contactsServices: ContactsService,
@@ -39,6 +38,14 @@ export class ContactsComponent {
 
   ngOnInit(){
     this.getContacts()
+    this.initForm()
+  }
+
+  initForm(){
+    this.form = {
+      name: '',
+      phone: ''
+    }
   }
 
   getContacts(){
@@ -53,21 +60,11 @@ export class ContactsComponent {
   }
 
   createContact(){
-    const payload: Contacts = {
-      name: this.name,
-      phone: this.phone
-    }
-    this.contactsServices.saveContact(payload).subscribe(_=>{
+    this.contactsServices.saveContact(this.form).subscribe(_=>{
       this.message.success('Contacto guardado')
       this.getContacts()
-      this.reset()
-      
+      this.initForm()      
     })
-  }
-
-  reset(){
-    this.name = ''
-    this.phone = ''
   }
 
   handleCancel(){
@@ -75,11 +72,16 @@ export class ContactsComponent {
   }
 
   handleOk(){
-    this.createContact()
+    if(this.form._id){
+      this.update()
+    }else{
+      this.createContact()
+    }
     this.isVisible = false
   }
 
   openModal(){
+    this.initForm()
     this.isVisible = true
   }
 
@@ -88,6 +90,17 @@ export class ContactsComponent {
       this.message.success('Contacto eliminado')
       this.getContacts()
     })
+  }
+
+  update(){
+    this.contactsServices.updateContact(this.form).subscribe(_=>{
+      this.message.success('Contacto actualizado')
+    })
+  }
+
+  edit(data: Contacts){
+    this.form = data
+    this.isVisible = true
   }
 
 }

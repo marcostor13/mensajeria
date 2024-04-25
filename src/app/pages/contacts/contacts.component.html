@@ -9,8 +9,9 @@
     <nz-table #basicTable [nzData]="listOfData">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Phone</th>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Opciones</th>
           </tr>
         </thead>
         <tbody>
@@ -19,13 +20,14 @@
                   <td>{{ data.name }}</td>
                   <td>{{ data.phone }}</td>
                   <td>
-                    <a>Action 一 {{ data.name }}</a>                    
+                    <a (click)="edit(data)">Editar</a>                    
                     <a
+                      class="ml-3"
                       nz-popconfirm
                       nzPopconfirmTitle="¿Seguro que desea eliminar el contacto?"
                       nzPopconfirmPlacement="bottom"
                       (nzOnConfirm)="deleteContact(data._id || '')"
-                    >Delete</a>
+                    >Eliminar</a>
                   </td>
                 </tr>
             }
@@ -33,9 +35,9 @@
     </nz-table>
 </div>
 
-<nz-modal [(nzVisible)]="isVisible" nzTitle="Agregar" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="form._id?'Editar':'Agregar'" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()" nzOkText="Guardar">
   <ng-container *nzModalContent>
-    <input nz-input placeholder="Nombre" [(ngModel)]="name" type="text" />
-    <input class="mt-3" nz-input placeholder="Teléfono" [(ngModel)]="phone" type="text" />
+    <input nz-input placeholder="Nombre" [(ngModel)]="form.name" type="text" />
+    <input class="mt-3" nz-input placeholder="Teléfono" [(ngModel)]="form.phone" type="text" />
   </ng-container>
 </nz-modal>

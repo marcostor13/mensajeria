@@ -1,0 +1,13 @@
+<nz-header class="app-header flex justify-content-between align-items-center">
+    <div >
+      <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+          <span class="trigger"
+             nz-icon
+             [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+          ></span>
+        </span>
+      </div>
+      <div class="col-2">
+        <button (click)="logout()" class="w-full mt-3" nz-button nzType="text">Cerrar sesión</button>
+      </div>
+  </nz-header>
