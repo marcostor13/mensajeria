@@ -7,6 +7,6 @@ import { Component } from '@angular/core';
   templateUrl: './simple-message.component.html',
   styleUrl: './simple-message.component.scss'
 })
-export class SimpleMessageComponent {
+export default class SimpleMessageComponent {
 
 }

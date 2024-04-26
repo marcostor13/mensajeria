@@ -36,7 +36,7 @@ export class AuthComponent {
     }
     this.authService.login(payload).subscribe((session)=>{
       localStorage.setItem(SESSION.localStorage, JSON.stringify(session))
-      this.router.navigate(['/contacts'])
+      this.router.navigate(['/contactos'])
     })
   }
 

@@ -24,7 +24,7 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
   templateUrl: './contacts.component.html',
   styleUrl: './contacts.component.scss'
 })
-export class ContactsComponent {
+export default class ContactsComponent {
   value: string = ''
   listOfData: Contacts[] = []
   listOfDataTmp: Contacts[] = []

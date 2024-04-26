@@ -7,9 +7,10 @@ export const routes: Routes = [
   {
     path: '',
     component: MainComponent,
-    children: [
-      { path: 'welcome', loadChildren: () => import('./pages/welcome/welcome.routes').then(m => m.WELCOME_ROUTES) },
-      { path: 'contacts', loadChildren: () => import('./pages/contacts/contacts.routes').then(m => m.CONTACTS_ROUTES) },      
+    children: [     
+      { path: 'contactos', loadComponent: () => import('./pages/contacts/contacts.component') },
+      { path: 'listas', loadComponent: () => import('./pages/list/list.component') },
+      { path: 'mensaje-simple', loadComponent: () => import('./pages/simple-message/simple-message.component') }      
     ],
     canActivate: [authGuard]
   },
