@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/auth/interceptors/auth.interceptor';
+import { errorsInterceptor } from './core/interceptors/errors/errors.interceptor';
 
 registerLocaleData(es);
 
@@ -21,7 +22,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(FormsModule), 
     provideAnimationsAsync(), 
     provideHttpClient(
-      withInterceptors([authInterceptor]),
+      withInterceptors([authInterceptor, errorsInterceptor]),
     )
   ]
 };

@@ -1,3 +1,4 @@
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -6,6 +7,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { ListService } from './services/list.service';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 
 @Component({
   selector: 'app-list',
@@ -15,7 +17,8 @@ import { ListService } from './services/list.service';
     NzTableModule,
     NzModalModule,
     NzButtonModule,
-    NzInputModule
+    NzInputModule,
+    NzPopconfirmModule
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
@@ -24,15 +27,18 @@ export default class ListComponent {
   
   value: string = ''
   listOfData: IList[] = []
+  listOfDataTmp: IList[] = []
   isVisible: boolean = false
   form!: IList
 
   constructor(
-    private listService: ListService
+    private listService: ListService,
+    private nzMessageService: NzMessageService
   ){}
 
   ngOnInit(): void {
-    this.initForm()    
+    this.initForm()
+    this.getLists()
   }
 
   initForm(){
@@ -41,8 +47,19 @@ export default class ListComponent {
     }
   }
 
-  search(){
+  getLists(){
+    this.listService.getLists().subscribe(lists=>{
+      this.listOfData = lists
+      this.listOfDataTmp = lists
+    })
+  }
 
+  search(){
+    if(this.value){
+      this.listOfData = this.listOfDataTmp.filter(list=>list.name.toLowerCase().indexOf(this.value.toLowerCase()) > -1)
+    }else{
+      this.listOfData = this.listOfDataTmp
+    }
   }
 
   openModal(){
@@ -51,11 +68,15 @@ export default class ListComponent {
   }
 
   edit(list: IList){
-
+    this.form = list
+    this.isVisible = true
   }
 
   deleteList(id: string){
-
+    this.listService.deleteList(id).subscribe(_=>{
+      this.nzMessageService.success('Lista eliminada')
+      this.getLists()
+    })
   }
 
   handleCancel(){
@@ -63,7 +84,9 @@ export default class ListComponent {
   }
 
   update(){
-
+    this.listService.updateList(this.form).subscribe(_=>{
+      this.nzMessageService.info('Lista actualizada')
+    })
   }
 
   handleOk(){
@@ -77,7 +100,7 @@ export default class ListComponent {
 
   createList(){
     this.listService.saveList(this.form).subscribe(_=>{
-      console.log('lista guardada')
+      this.getLists()
     })
   }
 }

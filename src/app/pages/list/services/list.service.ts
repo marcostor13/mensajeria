@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { IList } from '../interfaces/list.interface';
 import { ENDPOINTS } from '../../../share/constants/endpoints.constant';
 
@@ -14,7 +14,11 @@ export class ListService {
   ) { }
 
   getLists(): Observable<IList[]>{
-    return this.http.get<IList[]>(`${ENDPOINTS.api}/lists`)
+    return this.http.get<IList[]>(`${ENDPOINTS.api}/lists`).pipe(
+      map(lists=>lists.sort((a, b)=>{
+        return a.name.localeCompare(b.name)
+      }))
+    )
   }
 
   saveList(payload: IList): Observable<IList>{
