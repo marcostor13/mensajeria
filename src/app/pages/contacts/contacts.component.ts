@@ -1,5 +1,6 @@
+import { ListService } from './../list/services/list.service';
 import { Component } from '@angular/core'
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -8,18 +9,26 @@ import { ContactsService } from './services/contacts.service';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { IList } from '../list/interfaces/list.interface';
+import { GetListPipe } from './pipes/get-list.pipe';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-contacts',
   standalone: true,
   imports: [
+    CommonModule,
     NzInputModule,
     FormsModule,
+    ReactiveFormsModule,
     NzButtonModule,
     NzTableModule,
     NzModalModule,
     NzMessageModule,
-    NzPopconfirmModule
+    NzPopconfirmModule,
+    NzSelectModule,
+    GetListPipe
   ],
   templateUrl: './contacts.component.html',
   styleUrl: './contacts.component.scss'
@@ -29,23 +38,41 @@ export default class ContactsComponent {
   listOfData: Contacts[] = []
   listOfDataTmp: Contacts[] = []
   isVisible: boolean = false  
-  form!: Contacts 
+  form!: FormGroup 
+  lists: IList[] = []
+  contactId: string = ''
+  init: boolean = false
 
   constructor(
     private contactsServices: ContactsService,
-    private message: NzMessageService
-  ){}
-
-  ngOnInit(){
-    this.getContacts()
+    private message: NzMessageService,
+    private listService: ListService,
+    private fb: FormBuilder
+  ){
     this.initForm()
   }
 
+  ngOnInit(){
+    this.getContacts()
+    this.getLists()
+  }
+
   initForm(){
-    this.form = {
-      name: '',
-      phone: ''
-    }
+    this.form = this.fb.group({
+      listId: new FormControl(''),
+      name:  new FormControl('', [Validators.required]),
+      phone:  new FormControl('', [
+        Validators.required, 
+        Validators.minLength(9),
+        Validators.maxLength(9)
+      ]),
+    })
+  }
+
+  getLists(){
+    this.listService.getLists().subscribe(lists=>{
+      this.lists = lists
+    })
   }
 
   getContacts(){
@@ -60,7 +87,7 @@ export default class ContactsComponent {
   }
 
   createContact(){
-    this.contactsServices.saveContact(this.form).subscribe(_=>{
+    this.contactsServices.saveContact(this.form.value).subscribe(_=>{
       this.message.success('Contacto guardado')
       this.getContacts()
       this.initForm()      
@@ -72,12 +99,16 @@ export default class ContactsComponent {
   }
 
   handleOk(){
-    if(this.form._id){
-      this.update()
-    }else{
-      this.createContact()
+    console.log('errors', this.phone?.errors)
+    this.init = true
+    if(this.form.valid){
+      if(this.contactId){
+        this.update()
+      }else{
+        this.createContact()
+      }
+      this.isVisible = false
     }
-    this.isVisible = false
   }
 
   openModal(){
@@ -93,14 +124,19 @@ export default class ContactsComponent {
   }
 
   update(){
-    this.contactsServices.updateContact(this.form).subscribe(_=>{
+    this.contactsServices.updateContact(this.form.value).subscribe(_=>{
       this.message.success('Contacto actualizado')
     })
   }
 
   edit(data: Contacts){
-    this.form = data
+    this.contactId = data._id || ''
+    this.form.patchValue(data)
     this.isVisible = true
   }
+
+  get name() { return this.form?.get('name') }
+  get phone() { return this.form?.get('phone') }
+  get listId() { return this.form?.get('listId') }
 
 }

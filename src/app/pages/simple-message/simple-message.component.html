@@ -1,1 +1,20 @@
-<p>simple-message works!</p>
+<form class="flex flex-column lg:col-6 col-12 gap-3" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <nz-select nzMode="tags" nzPlaceHolder="Teléfonos" formControlName="phones">
+        @for (option of listOfOption; track $index) {
+            <nz-option [nzLabel]="option" [nzValue]="option"></nz-option>
+        }
+    </nz-select>
+    @if(init && phones?.errors && phones?.errors?.['required']){
+    <small class="error-text">Debe ingresar un telefono</small>
+    }
+    @if(init && phones?.errors && (phones?.errors?.['minlength'] || phone?.errors?.['maxlength'])){
+    <small class="error-text">El teléfono debe tener 9 dígitos</small>
+    }
+
+    <textarea placeholder="Mensaje"  rows="4" nz-input formControlName="message"></textarea>
+    @if (init && message?.errors) {
+    <small class="error-text">Debe ingresar un mensaje</small>
+    }
+
+    <button nz-button nzType="primary">Enviar</button>
+</form>

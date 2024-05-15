@@ -11,6 +11,7 @@
           <tr>
             <th>Nombre</th>
             <th>Teléfono</th>
+            <th>Lista</th>
             <th>Opciones</th>
           </tr>
         </thead>
@@ -19,6 +20,7 @@
                 <tr>
                   <td>{{ data.name }}</td>
                   <td>{{ data.phone }}</td>
+                  <td>{{ (data.listId || '') | getList:lists }}</td>
                   <td>
                     <a (click)="edit(data)">Editar</a>                    
                     <a
@@ -35,9 +37,27 @@
     </nz-table>
 </div>
 
-<nz-modal [(nzVisible)]="isVisible" [nzTitle]="form._id?'Editar':'Agregar'" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()" nzOkText="Guardar">
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="contactId?'Editar':'Agregar'" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()" nzOkText="Guardar">
   <ng-container *nzModalContent>
-    <input nz-input placeholder="Nombre" [(ngModel)]="form.name" type="text" />
-    <input class="mt-3" nz-input placeholder="Teléfono" [(ngModel)]="form.phone" type="text" />
+    <form [formGroup]="form">
+      <nz-select nzPlaceHolder="Lista" class="w-full" formControlName="listId" >
+        @for (item of lists; track $index) {
+          <nz-option [nzValue]="item._id" [nzLabel]="item.name"></nz-option>
+        }
+      </nz-select>      
+      <input [nzStatus]="(init && name?.errors)?'error':''"  class="mt-3" nz-input placeholder="Nombre" formControlName="name" type="text" />
+      @if (init && name?.errors) {
+        <small class="error-text">Debe ingresar un nombre</small>
+      }
+      <input [nzStatus]="(init && phone?.errors)?'error':''" class="mt-3" nz-input placeholder="Teléfono" formControlName="phone" type="text" /> 
+      <div class="flex flex-column">
+        @if(init && phone?.errors && phone?.errors?.['required']){
+          <small class="error-text">Debe ingresar un telefono</small>
+        }
+        @if(init && phone?.errors && (phone?.errors?.['minlength'] || phone?.errors?.['maxlength'])){
+          <small class="error-text">El teléfono debe tener 9 dígitos</small>
+        }
+      </div>
+    </form>
   </ng-container>
 </nz-modal>
